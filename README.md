@@ -23,7 +23,7 @@ One aim for this document is to turn it into a community resource much like the 
 - [ ] Check any developer/test-related engines/Rack apps do not expose any URL endpoints in production. They should not even leak (e.g. via 500 HTTP response code) information that they are installed. Ideally don't have their gems installed in production.
 
 
-### Views
+### Views (Vladimir Bazhanov)
 - [ ] Avoid HTML comments in view templates as these are viewable to clients. Use server-side comments instead:
 ```
 # bad - HTML comments will be visible to users who "View Source":
@@ -40,7 +40,7 @@ One aim for this document is to turn it into a community resource much like the 
 - [ ] Mitigate `Referer` header leaking URL secret tokens to 3rd parties (e.g. password reset URLs can be leaked to CDNs, JS hosted by third parties, other sites you link to). (https://robots.thoughtbot.com/is-your-site-leaking-password-reset-links)
 
 
-### IDs
+### IDs (Vladimir Bazhanov)
 - [ ] Avoid exposing sequential IDs (`98`, `99`, `100`, ...) which can leak information about your app's usage. For example, sequential IDs are often exposed in URLs, form field HTML source, and APIs. Sequential IDs reveal the size and rate at which certain types of data are created in your app. For example, if a competitor signs up to your service and their account page is at path `/users/12000`, and they sign up again in a month, and their new account path is `/users/13000`, you have leaked that your service gains roughly 1,000 sign-ups per month and has 13,000 accounts total. It is not recommended but some small mitigation can be made by starting IDs at a very large number, however this still leaks the rate of new data creation.
 - [ ] If IDs need to be exposed in URLs, forms, etc., favor less leaky IDs such as UUIDs or [hashids](http://hashids.org/ruby/) instead of sequential IDs.
 
@@ -64,7 +64,7 @@ end
 - [ ] Consider not archiving logs or regularly purging archived logs stored by you and 3rd parties.
 
 
-### Input Sanitization
+### Input Sanitization (Vladimir Bazhanov)
 - [ ] Filter and validate all user input
 - [ ] Avoid code that reads from filesystem using user-submitted file names and paths. Use a strict safelist of permitted file names and paths if this cannot be avoided.
 - [ ] Any routes that redirect to a URL provided in a query string or POST param should operate a safelist of acceptable redirect URLs and/or limit to only redirecting to paths within the app's URL. Do not redirect to any given URL.
@@ -72,14 +72,14 @@ end
 - [ ] Consider sanitizing all ActiveRecord attributes (favoring the secure default of an opt-out sanitizer such as `Loofah::XssFoliate` https://github.com/flavorjones/loofah-activerecord)
 
 
-### Uploads and File Processing
+### Uploads and File Processing (Vladimir Bazhanov)
 - [ ] Avoid handling file uploads on your (application) servers.
 - [ ] Favor scanning uploaded files for viruses/malware using a 3rd party service. don't do this on your own servers.
 - [ ] Operate a safelist of allowed file uploads
 - [ ] Avoid running imagemagick and other image processing software on your own infrastructure.
 
 
-### Email
+### Email (Vladimir Bazhanov)
 - [ ] Throttle the amount of emails that can be sent to a single user (e.g. some apps allow multiple password reset emails to be sent without restriction to the same user)
 - [ ] Avoid user-provided data being sent in emails that could be used in an attack. E.g. URLs will become links in most email clients, so if an attacker enters a URL (even into a field that is not intended to be a URL) and your app sends this to another user, that user/victim may click on the attacker-provided URL.
 - [ ] Email security (needs more info)
